@@ -1,22 +1,22 @@
-/* src/index.css */
+@import "tailwindcss";
 
 /* --- Core Design Variables & Theme Tokens --- */
 :root {
-  --color-primary: #2563EB;
-  --color-primary-hover: #1D4ED8;
-  --color-primary-light: rgba(37, 99, 235, 0.1);
-  --color-secondary: #FFFFFF;
-  --color-accent: #DBEAFE;
+  --color-primary: #78350F;
+  --color-primary-hover: #5B2508;
+  --color-primary-light: rgba(120, 53, 15, 0.08);
+  --color-secondary: #FFFDF9;
+  --color-accent: #FEF3C7;
   --color-success: #22C55E;
   --color-success-light: #DCFCE7;
   --color-warning: #F59E0B;
   --color-warning-light: #FEF3C7;
   --color-error: #EF4444;
   --color-error-light: #FEE2E2;
-  --color-text-dark: #1E293B;
-  --color-text-light: #64748B;
-  --color-bg-light: #F8FAFC;
-  --color-border: #E2E8F0;
+  --color-text-dark: #2D1E18;
+  --color-text-light: #786B65;
+  --color-bg-light: #FAF6EE;
+  --color-border: #EAE2D5;
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
@@ -100,6 +100,8 @@ body.dark #app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .logo-block {
@@ -120,6 +122,7 @@ body.dark #app-header {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -141,6 +144,7 @@ body.dark #app-header {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 #app-viewport {
@@ -807,8 +811,10 @@ body.dark #app-header {
 /* Seeker Profile Section */
 .profile-photo-wrapper {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  text-align: center;
+  gap: 1rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 1.5rem;

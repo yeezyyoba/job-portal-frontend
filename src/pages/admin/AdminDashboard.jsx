@@ -1,12 +1,13 @@
 // src/pages/admin/AdminDashboard.jsx
 import React, { useContext } from 'react';
 import { DbContext } from '../../context/DbContext';
-import { LayoutDashboard, Users, Briefcase, ShieldCheck, AlertTriangle, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, ShieldCheck, AlertTriangle, Settings as SettingsIcon, Bell } from 'lucide-react';
 import UserManagement from './UserManagement';
 import JobModeration from './JobModeration';
 import Verification from './Verification';
 import Reports from './Reports';
 import Settings from './Settings';
+import AdminNotifications from './AdminNotifications';
 
 export default function AdminDashboard({ currentHash, setHash, setSelectedJobId, setDetailsOpen }) {
   const { users, jobs, applications, reports, currentUser } = useContext(DbContext);
@@ -19,13 +20,15 @@ export default function AdminDashboard({ currentHash, setHash, setSelectedJobId,
   const pendingJobsCount = jobs.filter(j => !j.approved).length;
   const pendingVerificationsCount = users.filter(u => u.role === 'employer' && !u.verified).length;
   const pendingReportsCount = reports.filter(r => r.status === 'Pending').length;
+  const unreadNotifsCount = (currentUser?.notifications || []).filter(n => !n.read).length;
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard & Analytics', icon: <LayoutDashboard size={16} /> },
     { id: 'users', label: 'User Management', icon: <Users size={16} /> },
     { id: 'jobs', label: 'Job Management', icon: <Briefcase size={16} />, badge: pendingJobsCount },
     { id: 'verification', label: 'Company Verification', icon: <ShieldCheck size={16} />, badge: pendingVerificationsCount },
-    { id: 'reports', label: 'System Reports', icon: <AlertTriangle size={16} />, badge: pendingReportsCount }
+    { id: 'reports', label: 'System Reports', icon: <AlertTriangle size={16} />, badge: pendingReportsCount },
+    { id: 'notifications', label: 'Notifications', icon: <Bell size={16} />, badge: unreadNotifsCount }
   ];
 
   if (currentUser?.role === 'superadmin') {
@@ -67,6 +70,8 @@ export default function AdminDashboard({ currentHash, setHash, setSelectedJobId,
         return <Verification />;
       case 'reports':
         return <Reports />;
+      case 'notifications':
+        return <AdminNotifications />;
       case 'settings':
         if (currentUser?.role !== 'superadmin') return null;
         return <Settings />;

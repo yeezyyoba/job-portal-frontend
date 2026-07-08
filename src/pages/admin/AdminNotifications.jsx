@@ -1,9 +1,9 @@
-// src/pages/seeker/Notifications.jsx
+// src/pages/admin/AdminNotifications.jsx
 import React, { useContext, useEffect } from 'react';
 import { DbContext } from '../../context/DbContext';
 import { BellOff } from 'lucide-react';
 
-export default function Notifications() {
+export default function AdminNotifications() {
   const { currentUser, readNotifications } = useContext(DbContext);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function Notifications() {
   return (
     <div className="dashboard-panel">
       <div className="panel-header">
-        <h2>Notifications</h2>
+        <h2>Admin Notifications</h2>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {notifs.length === 0 ? (
@@ -32,11 +32,6 @@ export default function Notifications() {
                 <span className="text-muted" style={{ fontSize: '0.75rem' }}>{n.date}</span>
               </div>
               <p className="text-muted" style={{ fontSize: '0.85rem', margin: 0, marginTop: '0.25rem' }}>{n.message}</p>
-              {n.link && (
-                <a href={n.link} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary" style={{ marginTop: '0.5rem', display: 'inline-flex' }}>
-                  Join Meeting
-                </a>
-              )}
             </div>
           ))
         )}

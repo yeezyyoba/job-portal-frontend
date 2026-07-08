@@ -121,7 +121,7 @@ export default function Profile() {
             <div>
               <h4 style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Profile Image</h4>
               <p className="text-muted" style={{ fontSize: '0.8rem', marginBottom: '0.75rem' }}>JPG or PNG, max size of 800KB.</p>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                 <label className="btn btn-sm btn-outline" style={{ cursor: 'pointer' }}>
                   <Upload size={14} /> Upload Image
                   <input type="file" style={{ display: 'none' }} accept="image/*" onChange={handlePhotoUpload} />

@@ -12,6 +12,8 @@ import Contact from './pages/guest/Contact';
 import Login from './pages/guest/Login';
 import Register from './pages/guest/Register';
 import VerifyEmail from './pages/guest/VerifyEmail';
+import ForgotPassword from './pages/guest/ForgotPassword';
+import ResetPassword from './pages/guest/ResetPassword';
 import SeekerDashboard from './pages/seeker/SeekerDashboard';
 import EmployerDashboard from './pages/employer/EmployerDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -53,6 +55,7 @@ function AppContent() {
   const [hash, setHash] = useState(window.location.hash.substring(1) || 'home');
   const [searchQuery, setSearchQuery] = useState(null);
   const [verifyEmail, setVerifyEmail] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
 
   // Modal State Variables
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -189,8 +192,8 @@ function AppContent() {
     if (jobFormId) {
       updateJob(jobFormId, fields);
     } else {
-      const employerName = currentUser ? currentUser.companyName : "Stripe";
-      const employerLogo = currentUser ? currentUser.logo : "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop&q=80";
+      const employerName = currentUser ? currentUser.companyName : "Ride";
+      const employerLogo = currentUser ? currentUser.logo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyoMALyQxH2iPG0W0481QQofbME-c4q6dq3R15azq1Gg&s=10";
       addJob({
         company: employerName,
         companyLogo: employerLogo,
@@ -264,6 +267,10 @@ function AppContent() {
         return <Register setHash={updateHashState} setVerifyEmail={setVerifyEmail} />;
       case 'verify':
         return <VerifyEmail setHash={updateHashState} email={verifyEmail} />;
+      case 'forgot-password':
+        return <ForgotPassword setHash={updateHashState} setResetEmail={setResetEmail} />;
+      case 'reset-password':
+        return <ResetPassword setHash={updateHashState} resetEmail={resetEmail} />;
       case 'jobs':
         return (
           <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>

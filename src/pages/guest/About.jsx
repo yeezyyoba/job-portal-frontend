@@ -10,7 +10,7 @@ export default function About() {
       </div>
 
       <img 
-        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop&q=80" 
+        src="https://www.ienetworksolutions.com/wp-content/uploads/2023/09/3N5B3522-1-1024x683.jpg" 
         style={{ width: '100%', borderRadius: 'var(--radius-xl)', objectFit: 'cover', boxShadow: 'var(--shadow-lg)' }} 
         alt="Team working together"
       />

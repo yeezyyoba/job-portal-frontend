@@ -4,19 +4,40 @@ import { DbContext } from '../../context/DbContext';
 import { MapPin, Mail, Phone, Map } from 'lucide-react';
 
 export default function Contact() {
-  const { showToast } = useContext(DbContext);
+  const { showToast, API_BASE } = useContext(DbContext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    showToast("Ticket Created", `Thank you ${name}. Your support ticket regarding "${subject}" has been successfully submitted.`, "success");
-    setName('');
-    setEmail('');
-    setSubject('');
-    setMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast("Message Sent", data.message || `Thank you ${name}. We'll get back to you soon!`, "success");
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+      } else {
+        showToast("Error", data.message || "Failed to send your message. Please try again.", "error");
+      }
+    } catch (err) {
+      showToast("Server Offline", "Could not connect to the server. Please try again later.", "error");
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -69,7 +90,9 @@ export default function Contact() {
                 required 
               ></textarea>
             </div>
-            <button type="submit" className="btn btn-primary w-full">Submit Contact Request</button>
+            <button type="submit" className="btn btn-primary w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Submit Contact Request'}
+            </button>
           </form>
         </div>
 

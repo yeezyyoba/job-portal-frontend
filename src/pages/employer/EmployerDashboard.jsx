@@ -125,7 +125,7 @@ export default function EmployerDashboard({ currentHash, setHash, setFormOpen, s
           <img 
             src={currentUser.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop&q=80'} 
             className="profile-avatar-large" 
-            style={{ width: '3.5rem', height: '3.5rem', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} 
+            style={{ width: '3.5rem', height: '3.5rem', objectFit: 'cover', borderRadius: 'var(--radius-md)', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} 
             alt="Company logo summary"
           />
           <h4 style={{ fontWeight: 700 }}>{currentUser.companyName || 'Employer Studio'}</h4>

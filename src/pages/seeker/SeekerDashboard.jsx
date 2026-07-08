@@ -138,7 +138,7 @@ export default function SeekerDashboard({ currentHash, setHash, searchQuery, set
           <img 
             src={currentUser.profilePhoto || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&q=80'} 
             className="profile-avatar-large" 
-            style={{ width: '3.5rem', height: '3.5rem', marginBottom: '0.5rem' }} 
+            style={{ width: '3.5rem', height: '3.5rem', marginBottom: '0.5rem', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} 
             alt="Seeker portrait"
           />
           <h4 style={{ fontWeight: 700 }}>{currentUser.name || 'Anonymous Seeker'}</h4>

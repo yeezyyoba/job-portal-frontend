@@ -47,16 +47,35 @@ export const DbProvider = ({ children }) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
-  // 1. Fetch public jobs list
+  // 1. Fetch public jobs list (and employer's own jobs if applicable)
   const fetchJobs = async () => {
     try {
       const isAdminOrSuper = currentUser?.role === 'admin' || currentUser?.role === 'superadmin';
+      const isEmployer = activeRole === 'employer';
       const url = isAdminOrSuper ? `${API_BASE}/admin/jobs` : `${API_BASE}/jobs`;
       const headers = isAdminOrSuper ? getAuthHeaders() : {};
       
       const res = await fetch(url, { headers });
       if (res.ok) {
-        const data = await res.json();
+        let data = await res.json();
+
+        // For employers, also fetch their own jobs (including unapproved/closed)
+        // and merge them into the list so they can see pending approval status
+        if (isEmployer) {
+          try {
+            const myRes = await fetch(`${API_BASE}/jobs/my-listings`, { headers: getAuthHeaders() });
+            if (myRes.ok) {
+              const myJobs = await myRes.json();
+              // Merge: add employer's jobs that aren't already in the public list
+              const publicIds = new Set(data.map(j => j.id));
+              const extraJobs = myJobs.filter(j => !publicIds.has(j.id));
+              data = [...data, ...extraJobs];
+            }
+          } catch (e) {
+            console.error("Failed to fetch employer's own jobs:", e);
+          }
+        }
+
         setJobs(data);
       }
     } catch (err) {
@@ -186,6 +205,72 @@ export const DbProvider = ({ children }) => {
           return data;
         }
         showToast("Login Failed", data.message || "Invalid credentials", "error");
+        return false;
+      }
+    } catch (err) {
+      showToast("Server Offline", "Could not connect to authentication services.", "error");
+      return false;
+    }
+  };
+
+  const requestResetCode = async (email) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showToast("Code Sent", data.message || "Password reset code sent to your email.", "success");
+        return true;
+      } else {
+        showToast("Error", data.message || "Failed to send reset code.", "error");
+        return false;
+      }
+    } catch (err) {
+      showToast("Server Offline", "Could not connect to authentication services.", "error");
+      return false;
+    }
+  };
+
+  const verifyResetCode = async (email, code) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify-reset-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showToast("Code Verified", "Verification code is correct.", "success");
+        return true;
+      } else {
+        showToast("Error", data.message || "Invalid verification code.", "error");
+        return false;
+      }
+    } catch (err) {
+      showToast("Server Offline", "Could not connect to authentication services.", "error");
+      return false;
+    }
+  };
+
+  const resetPassword = async (email, code, newPassword) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code, newPassword })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showToast("Password Reset", "Your password has been reset successfully.", "success");
+        return true;
+      } else {
+        showToast("Error", data.message || "Failed to reset password.", "error");
         return false;
       }
     } catch (err) {
@@ -385,7 +470,7 @@ export const DbProvider = ({ children }) => {
       if (res.ok) {
         await fetchJobs();
         // Refresh application lists
-        const resApps = await fetch(`${API_BASE}/applications`, { headers: getAuthHeaders() });
+        const resApps = await fetch(`${API_BASE}/applications?role=${activeRole}`, { headers: getAuthHeaders() });
         if (resApps.ok) setApplications(await resApps.json());
         
         showToast("Listing Deleted", "Job deleted from database.", "warning");
@@ -415,7 +500,7 @@ export const DbProvider = ({ children }) => {
       const data = await res.json();
       if (res.ok) {
         // Refresh application lists
-        const resApps = await fetch(`${API_BASE}/applications`, { headers: getAuthHeaders() });
+        const resApps = await fetch(`${API_BASE}/applications?role=${activeRole}`, { headers: getAuthHeaders() });
         if (resApps.ok) setApplications(await resApps.json());
         showToast("Application Submitted", "Resume forwarded to recruitment panel.", "success");
         return true;
@@ -443,7 +528,7 @@ export const DbProvider = ({ children }) => {
       const data = await res.json();
       if (res.ok) {
         // Refresh applications
-        const resApps = await fetch(`${API_BASE}/applications`, { headers: getAuthHeaders() });
+        const resApps = await fetch(`${API_BASE}/applications?role=${activeRole}`, { headers: getAuthHeaders() });
         if (resApps.ok) setApplications(await resApps.json());
         showToast("Status Updated", `Candidate marked as ${status}.`, "success");
         return true;
@@ -486,13 +571,41 @@ export const DbProvider = ({ children }) => {
     let updatedSaved;
     if (saved.includes(jobId)) {
       updatedSaved = saved.filter(id => id !== jobId);
-      showToast("Bookmark Removed", "Listing removed from saved list.", "info");
     } else {
       updatedSaved = [...saved, jobId];
-      showToast("Bookmark Saved", "Listing saved to dashboard bookmarks.", "success");
     }
 
-    await updateProfile(currentUser.email, { savedJobs: updatedSaved });
+    // Optimistically update UI immediately
+    setCurrentUser(prev => ({ ...prev, savedJobs: updatedSaved }));
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/saved-jobs`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders()
+        },
+        body: JSON.stringify({ savedJobs: updatedSaved })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data);
+        if (saved.includes(jobId)) {
+          showToast("Bookmark Removed", "Listing removed from saved list.", "info");
+        } else {
+          showToast("Bookmark Saved", "Listing saved to dashboard bookmarks.", "success");
+        }
+      } else {
+        // Revert on failure
+        setCurrentUser(prev => ({ ...prev, savedJobs: saved }));
+        showToast("Error", "Failed to update saved jobs.", "error");
+      }
+    } catch (err) {
+      // Revert on failure
+      setCurrentUser(prev => ({ ...prev, savedJobs: saved }));
+      showToast("Error", "Could not update saved jobs.", "error");
+    }
   };
 
   // Interview Operations
@@ -514,7 +627,7 @@ export const DbProvider = ({ children }) => {
         if (resInts.ok) setInterviews(await resInts.json());
 
         // Refresh applications status (since it changes to Interview Scheduled)
-        const resApps = await fetch(`${API_BASE}/applications`, { headers: getAuthHeaders() });
+        const resApps = await fetch(`${API_BASE}/applications?role=${activeRole}`, { headers: getAuthHeaders() });
         if (resApps.ok) setApplications(await resApps.json());
 
         showToast("Coordination Logged", "Candidate notified of interview details.", "success");
@@ -738,8 +851,33 @@ export const DbProvider = ({ children }) => {
 
   const readNotifications = async () => {
     if (!currentUser) return;
-    const readNotifs = (currentUser.notifications || []).map(n => ({ ...n, read: true }));
-    await updateProfile(currentUser.email, { notifications: readNotifs });
+    const notifs = currentUser.notifications || [];
+    if (notifs.every(n => n.read)) return; // already all read
+
+    // Optimistically update UI
+    const readNotifs = notifs.map(n => ({ ...n, read: true }));
+    setCurrentUser(prev => ({ ...prev, notifications: readNotifs }));
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/notifications/read`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders()
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data);
+      } else {
+        // Revert on failure
+        setCurrentUser(prev => ({ ...prev, notifications: notifs }));
+      }
+    } catch (err) {
+      // Revert on failure
+      setCurrentUser(prev => ({ ...prev, notifications: notifs }));
+    }
   };
   return (
     <DbContext.Provider value={{
@@ -762,6 +900,9 @@ export const DbProvider = ({ children }) => {
       registerUser,
       verifyUserEmail,
       resendVerificationCode,
+      requestResetCode,
+      verifyResetCode,
+      resetPassword,
       updateProfile,
       fetchUsersList,
       getAuthHeaders,

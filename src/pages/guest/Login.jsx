@@ -1,12 +1,13 @@
-// src/pages/guest/Login.jsx
 import React, { useContext, useState } from 'react';
 import { DbContext } from '../../context/DbContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ setHash, setVerifyEmail }) {
   const { loginUser } = useContext(DbContext);
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,24 +55,42 @@ export default function Login({ setHash, setVerifyEmail }) {
               onChange={e => setEmail(e.target.value)}
               required 
             />
-            <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-              Demo Tip: Use <strong>seeker@portal.com</strong>, <strong>employer@portal.com</strong>, or <strong>admin@portal.com</strong> to log in instantly.
-            </p>
           </div>
           
           <div className="form-group">
             <div className="flex-between">
               <label className="form-label" style={{ margin: 0 }}>Password</label>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert('Demo Tip: Passwords are bypassed. Simply click Log In!'); }} style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 500 }}>Forgot Password?</a>
+              <a href="#forgot-password" onClick={(e) => { e.preventDefault(); setHash('forgot-password'); }} style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 500 }}>Forgot Password?</a>
             </div>
-            <input 
-              type="password" 
-              className="form-control" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required 
-              style={{ marginTop: '0.5rem' }}
-            />
+            <div style={{ position: 'relative', marginTop: '0.5rem' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                className="form-control" 
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required 
+                style={{ paddingRight: '2.5rem' }}
+              />
+              <button
+                type="button"
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--color-text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0
+                }}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
 
           <div className="form-group checkbox-group">

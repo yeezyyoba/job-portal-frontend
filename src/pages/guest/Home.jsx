@@ -29,10 +29,18 @@ export default function Home({ setHash, setSelectedJobId, setDetailsOpen, setSea
   };
 
   const testimonials = [
-    { quote: "JobPortal completely revamped our engineering hiring dashboard. We sourced and shortlisted our core staff in under 2 weeks.", name: "Marc Andreessen", title: "General Partner, a16z", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&q=80" },
-    { quote: "Searching for jobs was incredibly simple. The real-time tracker kept me informed at every interview stage.", name: "Esther Howard", title: "Product Designer, Airbnb", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&q=80" },
-    { quote: "We verified our startup account within 24 hours. The applicant filtering dashboard is extremely intuitive.", name: "Guillermo Rauch", title: "CEO, Vercel", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80" }
+    { quote: "ይህ የሥራ መድረክ ድርጅታችንን በእጅጉ ጠቅሞታል። በአጭር ጊዜ ውስጥ ብቁና ታማኝ የሆኑ የፈጠራ ባለሙያዎችን ለማግኘት አስችሎናል።", name: "ቴዎድሮስ አሰፋ", title: "መስራችና ዋና ስራ አስኪያጅ፣ ራይድ (RIDE)", avatar: "https://media.licdn.com/dms/image/v2/C4D03AQEOBc6wJrdVag/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1658609834285?e=1784764800&v=beta&t=2UX4av0sygCgbHMQFiNNhO_kM2YY5cQL_UmVVHiwJ_o" },
+    { quote: "የቅጥር ሂደታችንን በጣም ቀላልና ቀልጣፋ አድርጎልናል። ከፍተኛ ችሎታ ያላቸውን ኢትዮጵያውያን መሐንዲሶች ለመቅጠር የምንተማመንበት ዋና መድረክ ነው።", name: "ሰብለወንጌል ተሾመ", title: "የሰው ኃይል ዳይሬክተር፣ የኢትዮጵያ ንግድ ባንክ (CBE)", avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-cq7yoAG9FPiiMdmPn_uoOrsamTVCvdKQh2k7zNoo6cnozwqxEHjes6s&s=10" },
+    { quote: "ለእኔ ለክህሎቴ የሚመጥን ተስማሚ የሥራ ዕድል በቀላሉ እንዳገኝ ረድቶኛል። አሠራሩ ግልጽ እና ፈጣን በመሆኑ ሁልጊዜ የምንተማመንበት መተግበሪያ ነው።", name: "ዮናስ ብርሃኑ", title: "የሶፍትዌር መሐንዲስ", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&q=80" }
   ];
+
+  const topCompanies = [
+    { name: "Ride", category: "HR", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyoMALyQxH2iPG0W0481QQofbME-c4q6dq3R15azq1Gg&s=10", openings: "2 Active Openings" },
+    { name: "Temer Properties", category: "Sales", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzezkUFMdPsyMokbCKKOef512jY0RLWkmwjnn8OcxcB6bIJQ1uy092ROcw&s=10", openings: "1 Active Opening" },
+    { name: "Kelemat", category: "Engineering", logo: "https://media.licdn.com/dms/image/sync/v2/D5627AQFE5X7dthP5JA/articleshare-shrink_800/B56ZtQutdqGsAQ-/0/1766585981571?e=2147483647&v=beta&t=BqFZybHYTbVS1gWHep2qHq355KfMDBGvZjViCk22OVI", openings: "2 Active Openings" },
+    { name: "Lancet General Hospital", category: "Nursing", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSq1BXYmcuHKJA-7DZFsQO7B_2WsnkN75b8BeeJmcaNg&s=10" }
+  ];
+
 
   return (
     <>
@@ -138,30 +146,14 @@ export default function Home({ setHash, setSelectedJobId, setDetailsOpen, setSea
           <h2>Browse Top Companies</h2>
         </div>
         <div className="grid-companies">
-          <div className="card company-card card-hover">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop&q=80" alt="Stripe logo" />
-            <h4 style={{ fontWeight: 700 }}>Stripe</h4>
-            <span className="badge badge-primary">Fintech</span>
-            <p className="text-muted" style={{ fontSize: '0.8rem' }}>2 Active Openings</p>
-          </div>
-          <div className="card company-card card-hover">
-            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&h=100&fit=crop&q=80" alt="Airbnb logo" />
-            <h4 style={{ fontWeight: 700 }}>Airbnb</h4>
-            <span className="badge badge-primary">Hospitality</span>
-            <p className="text-muted" style={{ fontSize: '0.8rem' }}>1 Active Opening</p>
-          </div>
-          <div className="card company-card card-hover">
-            <img src="https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=100&h=100&fit=crop&q=80" alt="Vercel logo" />
-            <h4 style={{ fontWeight: 700 }}>Vercel</h4>
-            <span className="badge badge-primary">Cloud Platform</span>
-            <p className="text-muted" style={{ fontSize: '0.8rem' }}>2 Active Openings</p>
-          </div>
-          <div className="card company-card card-hover">
-            <img src="https://images.unsplash.com/photo-1618005198143-e5283b519a7f?w=100&h=100&fit=crop&q=80" alt="Linear logo" />
-            <h4 style={{ fontWeight: 700 }}>Linear</h4>
-            <span className="badge badge-primary">SaaS / Productivity</span>
-            <p className="text-muted" style={{ fontSize: '0.8rem' }}>1 Active Opening</p>
-          </div>
+          {topCompanies.map((company, idx) => (
+            <div key={idx} className="card company-card card-hover">
+              <img src={company.logo} alt={`${company.name} logo`} />
+              <h4 style={{ fontWeight: 700 }}>{company.name}</h4>
+              <span className="badge badge-primary">{company.category}</span>
+              <p className="text-muted" style={{ fontSize: '0.8rem' }}>{company.openings}</p>
+            </div>
+          ))}
         </div>
       </section>
 
